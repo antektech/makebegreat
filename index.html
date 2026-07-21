@@ -1,77 +1,158 @@
-<html>
-  <head>
-    <title>MakeBeGreat voting page</title>
-    <style>
-      body {
-        background-image: url("https://cdn.pixabay.com/photo/2016/11/23/15/23/cosmos-1853491_1280.jpg");
-        background-size: cover;
-        background-position: center;
-        font-family: Inter;
-        color: #ffffff;
-        margin: 0;
-      }
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>MakeBeGreat voting page</title>
 
-      header {
-        text-align: center;
-        padding: 30px 0;
-        backdrop-filter: blur(4px);
-      }
+  <style>
+    body {
+      background-image: url("https://cdn.pixabay.com/photo/2016/11/23/15/23/cosmos-1853491_1280.jpg");
+      background-size: cover;
+      background-position: center;
+      font-family: Inter, sans-serif;
+      color: #ffffff;
+      margin: 0;
+    }
 
-      .article {
-        text-align: center;
-        padding: 40px 0;
-      }
+    header {
+      text-align: center;
+      padding: 30px 0;
+      backdrop-filter: blur(4px);
+    }
 
-      .article img {
-        width: 200px;
-        height: 200px;
-        border-radius: 10px;
-      }
+    .article {
+      text-align: center;
+      padding: 40px 0;
+    }
 
-      .guzik {
-        background-color: #000099;
-        color: #ffffff;
-        font-family: Inter;
-        height: 40px;
-        width: 120px;
-        border-radius: 30px;
-        border: none;
-        cursor: pointer;
-        margin-top: 10px;
-      }
+    .article img {
+      width: 200px;
+      height: 200px;
+      border-radius: 10px;
+    }
 
-      .guzik:hover {
-        background-color: #0000cc;
-      }
+    .guzik {
+      background-color: #000099;
+      color: #ffffff;
+      font-family: Inter;
+      height: 40px;
+      width: 120px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
 
-      hr {
-        width: 60%;
-        border: 1px solid #ffffff55;
-      }
-    </style>
-  </head>
+    .guzik:hover {
+      background-color: #0000cc;
+    }
 
-  <body>
-    <header>
-      <h1>MakeBeGreat voting page</h1>
-    </header>
+    hr {
+      width: 60%;
+      border: 1px solid #ffffff55;
+    }
+  </style>
+</head>
 
-    <hr>
+<body>
 
-    <article class="article">
-      <h1>tytuł</h1>
-      <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
-      <p>opis</p>
-      <button class="guzik">głosuj</button>
-    </article>
+<header>
+  <h1>MakeBeGreat voting page</h1>
+</header>
 
-    <hr>
+<hr>
 
-    <article class="article">
-      <h1>tytuł</h1>
-      <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
-      <p>opis</p>
-      <button class="guzik">głosuj</button>
-    </article>
-  </body>
+<article class="article">
+  <h1>projekt1</h1>
+  <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
+  <p>opis projektu 1</p>
+  <p>Głosy: <span id="glosy_projekt1">0</span></p>
+  <button class="guzik" onclick="handleVote('projekt1')">głosuj</button>
+</article>
+
+<hr>
+
+<article class="article">
+  <h1>projekt2</h1>
+  <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
+  <p>opis projektu 2</p>
+  <p>Głosy: <span id="glosy_projekt2">0</span></p>
+  <button class="guzik" onclick="handleVote('projekt2')">głosuj</button>
+</article>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC61p0hXndF3Vdt3JrHvC93pEK3sdIwHjU",
+    authDomain: "makebegreat-6a2e2.firebaseapp.com",
+    projectId: "makebegreat-6a2e2",
+    storageBucket: "makebegreat-6a2e2.firebasestorage.app",
+    messagingSenderId: "644750619325",
+    appId: "1:644750619325:web:6bfb36e7bc02746bb67dd4",
+    measurementId: "G-PTMXDD056C",
+    databaseURL: "https://makebegreat-6a2e2-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  async function getIP() {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    return data.ip;
+  }
+
+  function loadVotes() {
+    const p1 = ref(db, "votes/projekt1");
+    const p2 = ref(db, "votes/projekt2");
+
+    onValue(p1, (snap) => {
+      document.getElementById("glosy_projekt1").innerText = snap.exists() ? snap.val() : 0;
+    });
+
+    onValue(p2, (snap) => {
+      document.getElementById("glosy_projekt2").innerText = snap.exists() ? snap.val() : 0;
+    });
+  }
+
+  loadVotes();
+
+  window.handleVote = async function(id) {
+    const ip = await getIP();
+
+    const ipRef = ref(db, "voted_ips/" + id + "/" + ip);
+    const ipSnap = await get(ipRef);
+
+    if (ipSnap.exists()) {
+      alert("Ten adres IP już oddał głos na ten projekt.");
+      return;
+    }
+
+    const r = Math.floor(Math.random() * 3) + 1;
+
+    if (r === 1 || r === 2) {
+      alert("Potwierdzenie…");
+      submitVote(id, ip);
+    } else {
+      submitVote(id, ip);
+    }
+  };
+
+  async function submitVote(id, ip) {
+    const voteRef = ref(db, "votes/" + id);
+    const ipRef = ref(db, "voted_ips/" + id + "/" + ip);
+
+    const snapshot = await get(voteRef);
+    const current = snapshot.exists() ? snapshot.val() : 0;
+
+    await set(voteRef, current + 1);
+    await set(ipRef, true);
+
+    alert("Głos oddany na: " + id);
+  }
+</script>
+
+</body>
 </html>
