@@ -1,38 +1,77 @@
 <html>
   <head>
+    <title>MakeBeGreat voting page</title>
     <style>
-      .tlo {
+      body {
         background-image: url("https://cdn.pixabay.com/photo/2016/11/23/15/23/cosmos-1853491_1280.jpg");
+        background-size: cover;
+        background-position: center;
         font-family: Inter;
         color: #ffffff;
+        margin: 0;
       }
-      .header {
+
+      header {
         text-align: center;
+        padding: 30px 0;
+        backdrop-filter: blur(4px);
       }
+
       .article {
         text-align: center;
-        font-family: Inter;
+        padding: 40px 0;
+      }
+
+      .article img {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px;
+      }
+
+      .guzik {
+        background-color: #000099;
         color: #ffffff;
+        font-family: Inter;
+        height: 40px;
+        width: 120px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .guzik:hover {
+        background-color: #0000cc;
+      }
+
+      hr {
+        width: 60%;
+        border: 1px solid #ffffff55;
       }
     </style>
   </head>
-  <title>MakeBeGreat voting page</title>
-  <body class="tlo" <header>
-    <h1></h1>
-    <h1 class="header">MakeBeGreat voting page</h1>
-    <h1></h1>
-    </header><br>
+
+  <body>
+    <header>
+      <h1>MakeBeGreat voting page</h1>
+    </header>
+
     <hr>
+
     <article class="article">
       <h1>tytuł</h1>
       <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
       <p>opis</p>
-    </article><br>
-    <hr>
-    <article class="article">
-      <h1>tytuł</h1>
-      <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
-      <p>opis</p>
+      <button class="guzik">głosuj</button>
     </article>
-    <body>
+
+    <hr>
+
+    <article class="article">
+      <h1>tytuł</h1>
+      <img src="https://www.medianauka.pl/informatyka/grafika/losowy-kolor.jpg">
+      <p>opis</p>
+      <button class="guzik">głosuj</button>
+    </article>
+  </body>
 </html>
